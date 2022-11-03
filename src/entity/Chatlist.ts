@@ -1,9 +1,15 @@
-import { Column, Entity } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('chatlist', { schema: 'chatbot' })
 export class Chatlist {
-  @Column('varchar', { name: 'id', length: 250 })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column('varchar', { name: 'name', nullable: true, length: 64 })
   name: string | null;
@@ -11,9 +17,9 @@ export class Chatlist {
   @Column('text', { name: 'message', nullable: true })
   message: string | null;
 
-  @Column('datetime', { name: 'createdAt' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @Column('datetime', { name: 'updatedAt' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

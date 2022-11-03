@@ -7,13 +7,13 @@ import { createConnection } from 'typeorm';
 createConnection({
   name: 'default',
   type: 'mysql',
-  host: '14.56.115.119',
+  host: 'localhost',
   port: 3306,
-  username: 'newroot',
-  password: 'cheomuk201720^^',
-  database: '',
-  synchronize: false,
-  entities: ['entities/*.js'],
+  username: 'root',
+  password: 'bjy102026',
+  database: 'chatbot',
+  synchronize: true,
+  entities: [Chatlist],
 }).then((connection) => {
   const io = new Server({
     cors: {
@@ -22,7 +22,7 @@ createConnection({
   });
 
   io.on('connection', (socket) => {
-    socket.on('init', async (room) => {
+    socket.on('init', async () => {
       const data = (await connection.manager.find(Chatlist)).map<Chat>(
         (value) => {
           return {
@@ -33,12 +33,21 @@ createConnection({
         }
       );
 
-      socket.join(room);
       socket.emit('init', data);
     });
 
     socket.on('chat', (data) => {
-      console.log(data);
+      const chat = new Chatlist();
+      chat.name = data.chat.nickname;
+      chat.message = data.chat.message;
+
+      connection.manager.save(chat);
+
+      socket.emit('chat', {
+        nickname: chat.name,
+        time: data.chat.time,
+        message: chat.message,
+      });
     });
   });
 
